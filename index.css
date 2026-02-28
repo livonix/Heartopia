@@ -1,0 +1,156 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-primary: #55a4dd;
+  --color-secondary: #9a836b;
+  
+  --font-main: 'Quicksand', sans-serif;
+  
+  /* Modern Clean Theme */
+  --wiki-bg: #f8fafc; /* Slate 50 */
+  --wiki-sidebar: #ffffff;
+  --wiki-content: #ffffff;
+  --wiki-text-main: #0f172a; /* Slate 900 */
+  --wiki-text-muted: #64748b; /* Slate 500 */
+  --wiki-border: #e2e8f0; /* Slate 200 */
+  --wiki-card-bg: #ffffff;
+  --wiki-glass: rgba(255, 255, 255, 0.7);
+  
+  --wiki-shadow-color: rgba(85, 164, 221, 0.08);
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 6rem;
+}
+
+html, body {
+  font-family: var(--font-main);
+  background-color: var(--wiki-bg);
+  color: var(--wiki-text-main);
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background-color: rgba(85, 164, 221, 0.2);
+  color: #0f172a;
+}
+
+/* Utilities */
+.glass-panel {
+  background: var(--wiki-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 
+    0 4px 6px -1px var(--wiki-shadow-color), 
+    0 10px 15px -3px rgba(0, 0, 0, 0.03),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+}
+
+.shiny-text {
+  display: inline-block;
+}
+
+.text-shadow-md { text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+.text-shadow-lg { text-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+
+/* Noise Texture */
+.bg-noise {
+  position: relative;
+}
+.bg-noise::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.animate-float { animation: float 6s ease-in-out infinite; }
+
+@keyframes wikiIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.animate-wiki-in { animation: wikiIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-slide-up { animation: slideUp 0.6s ease-out forwards; }
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up { animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+
+@keyframes zoomBreath {
+  0%, 100% { transform: scale(1.05); }
+  50% { transform: scale(1.15); }
+}
+.animate-zoom-breath { animation: zoomBreath 20s ease-in-out infinite alternate; }
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Delays */
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-500 { animation-delay: 500ms; }
+.delay-700 { animation-delay: 700ms; }
+
+/* Scrollbar Modernization */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+/* Prose Overrides */
+.prose-heartopia p {
+  color: var(--wiki-text-muted);
+  margin-bottom: 1.5rem;
+  line-height: 1.8;
+  font-size: 1.05rem;
+}
+.prose-heartopia h1, .prose-heartopia h2, .prose-heartopia h3 {
+  color: var(--wiki-text-main);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}

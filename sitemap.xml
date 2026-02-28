@@ -1,0 +1,86 @@
+
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+
+<url>
+  <loc>https://heartopia.fr/</loc>
+  <lastmod>2026-01-21T12:00:00+00:00</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>1.00</priority>
+</url>
+
+<url>
+  <loc>https://heartopia.fr/telecharger</loc>
+  <lastmod>2026-01-21T12:00:00+00:00</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.98</priority>
+</url>
+
+<url>
+  <loc>https://heartopia.fr/annonces</loc>
+  <lastmod>2026-01-21T12:00:00+00:00</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.95</priority>
+</url>
+
+<url>
+  <loc>https://heartopia.fr/wiki</loc>
+  <lastmod>2026-01-21T12:00:00+00:00</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.95</priority>
+</url>
+
+<url>
+  <loc>https://heartopia.fr/codes</loc>
+  <lastmod>2026-01-21T12:00:00+00:00</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.90</priority>
+</url>
+
+<url>
+  <loc>https://heartopia.fr/academy</loc>
+  <lastmod>2026-01-21T12:00:00+00:00</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.85</priority>
+</url>
+
+<url>
+  <loc>https://heartopia.fr/streamers</loc>
+  <lastmod>2026-01-21T12:00:00+00:00</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.80</priority>
+</url>
+
+<url>
+  <loc>https://heartopia.fr/team</loc>
+  <lastmod>2026-01-21T12:00:00+00:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.60</priority>
+</url>
+
+<url>
+  <loc>https://heartopia.fr/legal</loc>
+  <lastmod>2026-01-01T00:00:00+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.30</priority>
+</url>
+
+<url>
+  <loc>https://heartopia.fr/privacy</loc>
+  <lastmod>2026-01-01T00:00:00+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.30</priority>
+</url>
+
+<url>
+  <loc>https://heartopia.fr/feedback</loc>
+  <lastmod>2026-01-01T00:00:00+00:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.40</priority>
+</url>
+
+</urlset>
