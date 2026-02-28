@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { ASSETS } from '../constants';
-import { Settings, ExternalLink, Globe, Cookie, MessageCircle } from 'lucide-react';
+import { Settings, ExternalLink, Globe, Cookie, MessageCircle, Github } from 'lucide-react';
 import { useLanguage } from '../lib/languageContext';
 
 interface FooterProps {
@@ -55,6 +55,17 @@ export const Footer: React.FC<FooterProps> = ({ onAdminClick, onTeamClick, onLeg
                 >
                   <MessageCircle size={18} className="fill-white/20" />
                   {t("footer.join_discord")}
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://github.com/livonix/Heartopia"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-center gap-3 bg-gray-800 text-white px-5 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all hover:bg-gray-700 shadow-xl shadow-gray-800/20 hover:-translate-y-1"
+                >
+                  <Github size={18} className="fill-white/20" />
+                  Code Source Open Source
                 </a>
               </li>
               <li>

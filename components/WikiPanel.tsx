@@ -7,7 +7,7 @@ import {
   Search, ChevronRight, ChevronDown, Loader2, MapPin,
   Calendar, Coins, Ruler, Menu, X, ArrowUpRight, CloudSun, Utensils, Clock, Check
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useCachedFetch } from '../hooks/useCachedFetch';
 
 interface WikiPanelProps {
