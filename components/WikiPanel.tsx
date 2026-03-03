@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo, useEffect } from 'react';
 import { WIKI_STRUCTURE as FALLBACK_STRUCTURE, WikiCategory, API_URL } from '../constants';
 import { CommentsSection } from './CommentsSection';
@@ -131,16 +130,45 @@ const Infobox: React.FC<{ data: any, isCollected?: boolean, onToggle?: () => voi
           )}
         </div>
 
-        {data.price_min && (
+        {(data.price_min || data.price_max) && (
           <div className="mt-auto pt-2 flex items-center justify-between">
             <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Valeur</span>
             <div className="flex items-center gap-1.5 font-black text-amber-500 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-100 group-hover:bg-amber-100 transition-colors">
               <Coins size={14} className="fill-amber-500" />
-              {data.price_min}
+              {data.price_min && data.price_max ? `${data.price_min} - ${data.price_max}` : data.price_min || data.price_max}
             </div>
           </div>
         )}
       </div>
+    </div>
+  );
+};
+
+// Table of Contents Component
+const TableOfContents: React.FC<{ sections: any[] }> = ({ sections }) => {
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(`section-${sectionId}`);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  if (!sections || sections.length <= 1) return null;
+
+  return (
+    <div className="sticky top-24 bg-white rounded-2xl shadow-sm border border-slate-100 p-6 mb-8">
+      <h3 className="text-sm font-black text-slate-400 uppercase tracking-wider mb-4">Sommaire</h3>
+      <nav className="space-y-2">
+        {sections.map((section, index) => (
+          <button
+            key={section.id}
+            onClick={() => scrollToSection(section.id)}
+            className="block w-full text-left px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#2b7dad] transition-colors"
+          >
+            {index + 1}. {section.title}
+          </button>
+        ))}
+      </nav>
     </div>
   );
 };
@@ -287,11 +315,24 @@ export const WikiPanel: React.FC<WikiPanelProps> = ({ user, onLoginRequest, init
 
   const filteredNav = useMemo(() => {
     if (!wikiData) return [];
+    const searchTerm = search.toLowerCase();
+    
     return wikiData.map(cat => ({
       ...cat,
       pages: (cat.pages || []).filter(p => {
-        const title = p.title;
-        return !search || title.toLowerCase().includes(search.toLowerCase());
+        const titleMatch = p.title.toLowerCase().includes(searchTerm);
+        
+        // Rechercher dans les noms d'objets des sections
+        const contentMatch = p.sections?.some(section => {
+          if (Array.isArray(section.content)) {
+            return section.content.some(item => 
+              (item.title || item.name)?.toLowerCase().includes(searchTerm)
+            );
+          }
+          return false;
+        });
+        
+        return !search || titleMatch || contentMatch;
       })
     })).filter(cat => cat.pages.length > 0);
   }, [search, wikiData]);
@@ -399,6 +440,9 @@ export const WikiPanel: React.FC<WikiPanelProps> = ({ user, onLoginRequest, init
 
             <div className="h-1.5 w-20 bg-[#2b7dad] rounded-full"></div>
           </div>
+
+          {/* Table of Contents */}
+          <TableOfContents sections={activePage.sections || []} />
 
           <AnimatePresence mode="wait">
             <motion.div
