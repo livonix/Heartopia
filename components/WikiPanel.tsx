@@ -1,10 +1,10 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { WIKI_STRUCTURE as FALLBACK_STRUCTURE, WikiCategory, API_URL } from '../constants';
+import { WIKI_STRUCTURE as FALLBACK_STRUCTURE, WikiCategory } from '../constants';
 import { CommentsSection } from './CommentsSection';
 import { useLanguage } from '../lib/languageContext';
 import {
   Search, ChevronRight, ChevronDown, Loader2, MapPin,
-  Calendar, Coins, Ruler, Menu, X, ArrowUpRight, CloudSun, Utensils, Clock, Check
+  Calendar, Coins, Ruler, Menu, X, CloudSun, Utensils, Clock, Check
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCachedFetch } from '../hooks/useCachedFetch';
@@ -15,21 +15,21 @@ interface WikiPanelProps {
   initialSlug?: string;
 }
 
-// Improved Bubble Tag
-const BubbleTag = ({ label, color = "blue" }: { label: string, color?: "blue" | "orange" | "green" | "pink" | "slate" }) => {
-  const styles = {
-    blue: "bg-sky-50 text-sky-600 border-sky-100",
-    orange: "bg-orange-50 text-orange-600 border-orange-100",
-    green: "bg-emerald-50 text-emerald-600 border-emerald-100",
-    pink: "bg-rose-50 text-rose-600 border-rose-100",
-    slate: "bg-slate-50 text-slate-600 border-slate-100"
-  };
-  return (
-    <span className={`${styles[color]} px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider border inline-flex items-center`}>
-      {label}
-    </span>
-  );
-};
+// Improved Bubble Tag (non utilisé pour l'instant)
+// const BubbleTag = ({ label, color = "blue" }: { label: string, color?: "blue" | "orange" | "green" | "pink" | "slate" }) => {
+//   const styles = {
+//     blue: "bg-sky-50 text-sky-600 border-sky-100",
+//     orange: "bg-orange-50 text-orange-600 border-orange-100",
+//     green: "bg-emerald-50 text-emerald-600 border-emerald-100",
+//     pink: "bg-rose-50 text-rose-600 border-rose-100",
+//     slate: "bg-slate-50 text-slate-600 border-slate-100"
+//   };
+//   return (
+//     <span className={`${styles[color]} px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider border inline-flex items-center`}>
+//       {label}
+//     </span>
+//   );
+// };
 
 // Redesigned Infobox (Card Style)
 const Infobox: React.FC<{ data: any, isCollected?: boolean, onToggle?: () => void }> = ({ data, isCollected, onToggle }) => {
@@ -173,12 +173,12 @@ const TableOfContents: React.FC<{ sections: any[] }> = ({ sections }) => {
   );
 };
 
-const ItemGrid: React.FC<{ items: any[], collectedIds: string[], onToggle: (id: string) => void }> = ({ items, collectedIds, onToggle }) => (
+const ItemGrid: React.FC<{ items: any[], collectedIds: string[], onToggle: (id: string) => void, sectionId?: string }> = ({ items, collectedIds, onToggle, sectionId }) => (
   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 my-8">
     {items.map((item, i) => {
       const isCollected = collectedIds.includes(item.title || item.name); // Using title/name as ID for demo
       return (
-        <div key={i} className={`group bg-white rounded-3xl p-4 border shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer animate-slide-up relative ${isCollected ? 'border-emerald-200 ring-2 ring-emerald-100' : 'border-slate-100'}`} style={{ animationDelay: `${i * 50}ms` }}>
+        <div key={i} id={sectionId ? `element-${sectionId}-${i}` : undefined} className={`group bg-white rounded-3xl p-4 border shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer animate-slide-up relative ${isCollected ? 'border-emerald-200 ring-2 ring-emerald-100' : 'border-slate-100'}`} style={{ animationDelay: `${i * 50}ms` }}>
           <button
             onClick={(e) => { e.stopPropagation(); onToggle(item.title || item.name); }}
             className={`absolute top-3 left-3 z-10 p-1.5 rounded-full transition-all ${isCollected ? 'bg-emerald-500 text-white' : 'bg-slate-100 text-slate-300 hover:text-emerald-500'}`}
@@ -280,14 +280,29 @@ export const WikiPanel: React.FC<WikiPanelProps> = ({ user, onLoginRequest, init
     setExpandedCats(prev => prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id]);
   };
 
-  const handlePageChange = (page: any) => {
-    if (activePageId === page.id.toString()) return;
+  const handlePageChange = (page: any, targetElementId?: string) => {
+    if (activePageId === page.id.toString() && !targetElementId) return;
     setIsTransitioning(true);
     setTimeout(() => {
       setActivePageId(page.id.toString());
       setIsMobileMenuOpen(false);
       window.scrollTo({ top: 0, behavior: 'smooth' });
       setIsTransitioning(false);
+      
+      // Si on a une cible spécifique, scroller vers elle après le chargement
+      if (targetElementId) {
+        setTimeout(() => {
+          const targetElement = document.getElementById(targetElementId);
+          if (targetElement) {
+            targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // Mettre en évidence l'élément trouvé
+            targetElement.classList.add('ring-4', 'ring-amber-400', 'ring-opacity-50');
+            setTimeout(() => {
+              targetElement.classList.remove('ring-4', 'ring-amber-400', 'ring-opacity-50');
+            }, 3000);
+          }
+        }, 500);
+      }
     }, 300);
   };
 
@@ -319,21 +334,36 @@ export const WikiPanel: React.FC<WikiPanelProps> = ({ user, onLoginRequest, init
     
     return wikiData.map(cat => ({
       ...cat,
-      pages: (cat.pages || []).filter(p => {
+      pages: (cat.pages || []).map(p => {
         const titleMatch = p.title.toLowerCase().includes(searchTerm);
+        let foundElement: { sectionId: string, elementIndex: number, elementName: string } | null = null;
         
         // Rechercher dans les noms d'objets des sections
-        const contentMatch = p.sections?.some(section => {
+        const contentMatch = p.sections?.some((section) => {
           if (Array.isArray(section.content)) {
-            return section.content.some(item => 
-              (item.title || item.name)?.toLowerCase().includes(searchTerm)
-            );
+            return section.content.some((item, itemIndex) => {
+              const elementName = (item.title || item.name)?.toLowerCase();
+              if (elementName?.includes(searchTerm)) {
+                foundElement = {
+                  sectionId: section.id.toString(),
+                  elementIndex: itemIndex,
+                  elementName: item.title || item.name
+                };
+                return true;
+              }
+              return false;
+            });
           }
           return false;
         });
         
-        return !search || titleMatch || contentMatch;
-      })
+        return {
+          ...p,
+          hasContentMatch: contentMatch,
+          foundElement,
+          shouldShow: !search || titleMatch || contentMatch
+        };
+      }).filter(p => p.shouldShow)
     })).filter(cat => cat.pages.length > 0);
   }, [search, wikiData]);
 
@@ -399,17 +429,25 @@ export const WikiPanel: React.FC<WikiPanelProps> = ({ user, onLoginRequest, init
                       <div className="absolute left-2 top-0 bottom-0 w-px bg-slate-100"></div>
                       {(cat.pages || []).map(page => {
                         const isActive = activePageId === page.id.toString();
+                        const targetElementId = page.foundElement ? `element-${page.foundElement.sectionId}-${page.foundElement.elementIndex}` : undefined;
                         return (
                           <button
                             key={page.id}
-                            onClick={() => handlePageChange(page)}
+                            onClick={() => handlePageChange(page, targetElementId)}
                             className={`text-left px-4 py-2.5 rounded-xl text-xs font-bold transition-all relative z-10 ml-2
                           ${isActive
                                 ? 'bg-[#2b7dad] text-white shadow-md shadow-[#2b7dad]/20'
                                 : 'text-slate-600 hover:bg-slate-50 hover:text-[#2b7dad]'
                               }`}
                           >
-                            {page.title}
+                            <div className="flex flex-col items-start">
+                              <span>{page.title}</span>
+                              {page.foundElement && (
+                                <span className="text-[10px] text-amber-600 font-normal mt-1">
+                                  → {page.foundElement.elementName}
+                                </span>
+                              )}
+                            </div>
                           </button>
                         )
                       })}
@@ -476,12 +514,13 @@ export const WikiPanel: React.FC<WikiPanelProps> = ({ user, onLoginRequest, init
                       {(isInfoboxSeries || isInsectSeries || isAnimalSeries || isRecipeSeries) && (
                         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                           {(rawContent as any[]).map((data, i) => (
-                            <Infobox
-                              key={i}
-                              data={data}
-                              isCollected={collectedItems.includes(data.title || data.name)}
-                              onToggle={() => toggleCollected(data.title || data.name)}
-                            />
+                            <div id={`element-${section.id}-${i}`} key={i}>
+                              <Infobox
+                                data={data}
+                                isCollected={collectedItems.includes(data.title || data.name)}
+                                onToggle={() => toggleCollected(data.title || data.name)}
+                              />
+                            </div>
                           ))}
                         </div>
                       )}
@@ -491,6 +530,7 @@ export const WikiPanel: React.FC<WikiPanelProps> = ({ user, onLoginRequest, init
                           items={rawContent as any[]}
                           collectedIds={collectedItems}
                           onToggle={toggleCollected}
+                          sectionId={section.id.toString()}
                         />
                       )}
 
